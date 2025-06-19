@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+
 # Step 2: Reading the Dataset
 df = pd.read_csv('Electric Vehicle Sales by State in India.csv')
 
@@ -154,3 +155,55 @@ plt.ylabel('Importance Score')
 plt.xticks(rotation=90)
 plt.tight_layout()
 plt.show()
+
+# State-wise total EV sales
+state_sales = df.groupby('State')['EV_Sales_Quantity'].sum().sort_values(ascending=False)
+
+plt.figure(figsize=(12, 8))
+sns.heatmap(state_sales.to_frame(), annot=True, fmt=".0f", cmap="YlGnBu")
+plt.title('Heatmap of Total EV Sales by State')
+plt.xlabel("EV Sales Quantity")
+plt.ylabel("State")
+plt.tight_layout()
+plt.show()
+
+monthly_trend = df.groupby(['Year', 'Month_Name'])['EV_Sales_Quantity'].sum().unstack().fillna(0)
+
+plt.figure(figsize=(12, 6))
+sns.heatmap(monthly_trend, cmap='YlOrRd', annot=False, linewidths=0.3)
+plt.title('EV Sales Trend Over Months and Years')
+plt.ylabel('Year')
+plt.xlabel('Month')
+plt.tight_layout()
+plt.show()
+
+category_sales = df.groupby('Vehicle_Category')['EV_Sales_Quantity'].sum()
+
+plt.figure(figsize=(6, 6))
+category_sales.plot(kind='pie', autopct='%1.1f%%', startangle=90, colors=sns.color_palette('pastel'))
+plt.title('Share of EV Sales by Vehicle Category')
+plt.ylabel('')
+plt.tight_layout()
+plt.show()
+
+top_states = df.groupby('State')['EV_Sales_Quantity'].sum().nlargest(10)
+
+plt.figure(figsize=(10, 6))
+sns.barplot(x=top_states.values, y=top_states.index, palette='viridis')
+plt.title('Top 10 States by Total EV Sales')
+plt.xlabel('Total EV Sales')
+plt.ylabel('State')
+plt.tight_layout()
+plt.show()
+
+maha_trend = df[df['State'] == 'Maharashtra'].groupby('Year')['EV_Sales_Quantity'].sum()
+
+plt.figure(figsize=(8, 4))
+sns.lineplot(x=maha_trend.index, y=maha_trend.values, marker='o', color='green')
+plt.title('Yearly EV Sales Trend in Maharashtra')
+plt.xlabel('Year')
+plt.ylabel('EV Sales')
+plt.tight_layout()
+plt.show()
+
+
